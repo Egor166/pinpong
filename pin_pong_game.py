@@ -36,10 +36,21 @@ class Ball(GameSprite):
         if self.rect.y <=0 or self.rect.y >= win_h-self.h:
             y_speed *= -1
 
+class Player(GameSprite):
+    def move_left(self):
+        keys = key.get_pressed()
+        if keys[K_w] and self.rect.y >=0:
+            self.rect.y -= self.speed
+        if keys[K_s] and self.rect.y <= win_h-self.h:
+            self.rect.y += self.speed
+
+
 background = GameSprite(win_w,win_h,0,0,'background2.png',0)
 ball = Ball(50,50,100,100,'Ball.png',2)
 x_speed = ball.speed
 y_speed = ball.speed
+left_player = Player(10,100,130,100,'пинпонг.png',5)
+right_player = Player(10,100,560,100,'пинпонг.png',5)
 
 
 clock = time.Clock()
@@ -51,6 +62,11 @@ while game:
         background.reset()
         ball.reset()
         ball.move()
+        left_player.reset()
+        left_player.move_left()
+        right_player.reset()
+        right_player.move_left()
+        
 
 
         
