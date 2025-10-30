@@ -10,7 +10,7 @@ game = True
 window = display.set_mode((win_w,win_h))
 display.set_caption('Пинпонг')
 mixer.music.load('фоновая.ogg')
-mixer.music.play()
+#mixer.music.play()
 
 class GameSprite(sprite.Sprite):
     def __init__(self,sprite_w,sprite_h,sprite_x,sprite_y,sprite_image,sprite_speed):
@@ -29,15 +29,17 @@ class GameSprite(sprite.Sprite):
 
 class Ball(GameSprite):
     def move(self):
-        q = 1
-        w = 2
-        self.rect.x += q
-        self.rect.y += w
+        global x_speed
+        global y_speed
+        self.rect.x += x_speed
+        self.rect.y += y_speed
         if self.rect.y <=0 or self.rect.y >= win_h-self.h:
-            w *= -1
+            y_speed *= -1
 
 background = GameSprite(win_w,win_h,0,0,'background2.png',0)
 ball = Ball(50,50,100,100,'Ball.png',2)
+x_speed = ball.speed
+y_speed = ball.speed
 
 
 clock = time.Clock()
