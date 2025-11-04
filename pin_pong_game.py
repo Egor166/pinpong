@@ -1,21 +1,21 @@
 from pygame import *
 mixer.init()
 font.init()
-#! Константы
+# Константы
 win_w = 700
 win_h = 400
 FPS = 60
 finish = True
 game = True
-#! Главное окно
+# Главное окно
 window = display.set_mode((win_w,win_h))
 display.set_caption('Пинпонг')
-#! Музыка
+# Музыка
 mixer.music.load('фоновая.ogg')
 #mixer.music.play()
 kick = mixer.Sound('отскок.ogg')
 
-#! Классы
+# Классы
 class GameSprite(sprite.Sprite):
     def __init__(self,sprite_w,sprite_h,sprite_x,sprite_y,sprite_image,sprite_speed):
         super().__init__()
@@ -58,8 +58,7 @@ class Player(GameSprite):
         if keys[K_DOWN] and self.rect.y <= win_h-self.h:
             self.rect.y += self.speed
         
-#! Основной код
-
+# Основной код
 background = GameSprite(win_w,win_h,0,0,'background2.png',0)
 ball = Ball(40,40,170,100,'Ball.png',2)
 x_speed = ball.speed
@@ -67,7 +66,20 @@ y_speed = ball.speed
 left_player = Player(10,100,130,100,'пинпонг.png',5)
 right_player = Player(10,100,560,100,'пинпонг.png',5)
 
-#! Игровой цикл
+right_name = 'qwerty' #input('имя правого игрока:')
+left_name = 'wasd' #input('имя левого игрока:')
+font1 = font.Font(None,35)
+name1 = font1.render(right_name, True,(0,0,0))
+name2 = font1.render(left_name,True,(0,0,0))
+
+
+
+
+
+
+
+
+# Игровой цикл
 clock = time.Clock()
 while game:
     for e in event.get():
@@ -81,7 +93,9 @@ while game:
         left_player.move_left()
         right_player.reset()
         right_player.move_right()
-        
+
+        window.blit(name1, (605,10))
+        window.blit(name2, (10,10))
 
 
         
