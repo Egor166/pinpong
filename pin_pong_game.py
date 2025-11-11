@@ -52,9 +52,13 @@ class Ball(GameSprite):
         if self.rect.x <= 0:
             right_score += 1
             self.rect.x = 310
+            time.delay(500)
         if self.rect.x >= win_w-self.w:
             left_score += 1
             self.rect.x = 310
+            time.delay(500)
+        
+
 
 class Player(GameSprite):
     def move_left(self):
@@ -82,17 +86,19 @@ right_name = input('имя правого игрока:')
 left_name = input('имя левого игрока:')
 font1 = font.Font(None,35)
 font2 = font.Font(None,70)
-name1 = font1.render(right_name, True,(0,0,0))
-name2 = font1.render(left_name,True,(0,0,0))
+name1 =font1.render(right_name, True,(0,0,0))
+name2 =font1.render(left_name,True,(0,0,0))
 x_speed = ball.speed
 y_speed = ball.speed
 clock = time.Clock()
 
+time.delay(1200)
 while game:
     for e in event.get():
         if e.type == QUIT:
             game = False
     if finish:
+        
         background.reset()
         ball.reset()
         ball.move(left_player,right_player)
