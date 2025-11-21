@@ -1,11 +1,13 @@
 from pygame import *
+import pygame_widgets
+from pygame_widgets.textbox import TextBox
 mixer.init()
 font.init()
 
 win_w = 700
 win_h = 400
 FPS = 60
-finish = True
+finish = False
 game = True
 left_score = 0
 right_score = 0
@@ -16,6 +18,11 @@ sound = mixer.Sound('фоновая.ogg')
 sound.set_volume(0.2)
 sound.play()
 kick = mixer.Sound('отскок.ogg')
+
+def output():
+    global finish
+    finish = True
+
 
 class GameSprite(sprite.Sprite):
     def __init__(self,sprite_w,sprite_h,sprite_x,sprite_y,sprite_image,sprite_speed):
@@ -82,23 +89,34 @@ ball = Ball(40,40,310,100,'Ball.png',4)
 left_player = Player(10,100,130,100,'пинпонг.png',5)
 right_player = Player(10,100,560,100,'пинпонг.png',5)
 
-right_name = input('имя правого игрока:')
+right_name = TextBox(window, 100, 200, 400, 80, fontSize=50,onSubmit=output)#input('имя правого игрока:')
 left_name = input('имя левого игрока:')
+
 font1 = font.Font(None,35)
 font2 = font.Font(None,70)
-name1 =font1.render(right_name, True,(0,0,0))
+
+
+name1 =font1.render(str(right_name.getText()), True,(0,0,0))
+
 name2 =font1.render(left_name,True,(0,0,0))
 x_speed = ball.speed
 y_speed = ball.speed
+
 clock = time.Clock()
 
-time.delay(1200)
+
 while game:
-    for e in event.get():
+    events = event.get()
+    for e in events:
         if e.type == QUIT:
             game = False
+
+    window.fill((255, 255, 255))
+    pygame_widgets.update(events)
+    name1 = font1.render(right_name.getText(), True, (0,0,0))
+    name2 = font1.render(left_name, True, (0,0,0))
+
     if finish:
-        
         background.reset()
         ball.reset()
         ball.move(left_player,right_player)
@@ -116,14 +134,14 @@ while game:
         window.blit(score1,(605,40))
         window.blit(score2, (10,40))
 
-        if right_score == 5:
+        '''if right_score == 5:
             win = font2.render((right_name+' win!'),True,(225,0,0))
             window.blit(win,(260,150))
             Finish = False
         if left_score == 5:
             win = font2.render((left_name+' win!'),True,(225,0,0))
             window.blit(win,(260,150))
-            finish = False
+            finish = False'''
         
     display.update()
     clock.tick(FPS)
