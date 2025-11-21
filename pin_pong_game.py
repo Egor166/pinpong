@@ -8,6 +8,7 @@ win_w = 700
 win_h = 400
 FPS = 60
 finish = False
+finish_num = 0
 game = True
 left_score = 0
 right_score = 0
@@ -20,8 +21,9 @@ sound.play()
 kick = mixer.Sound('отскок.ogg')
 
 def output():
-    global finish
-    finish = True
+    global finish_num
+    finish_num += 1
+    print(finish_num)
 
 
 class GameSprite(sprite.Sprite):
@@ -89,16 +91,15 @@ ball = Ball(40,40,310,100,'Ball.png',4)
 left_player = Player(10,100,130,100,'пинпонг.png',5)
 right_player = Player(10,100,560,100,'пинпонг.png',5)
 
-right_name = TextBox(window, 100, 200, 400, 80, fontSize=50,onSubmit=output)#input('имя правого игрока:')
-left_name = input('имя левого игрока:')
+right_name = TextBox(window, win_w-310, 100, 300, 80, fontSize=50,onSubmit=output)#input('имя правого игрока:')
+left_name = TextBox(window, 10, 100, 300, 80, fontSize=50,onSubmit=output) #input('имя левого игрока:')
 
 font1 = font.Font(None,35)
 font2 = font.Font(None,70)
 
+name_1 = font1.render('player1 name:', True, (0,0,0))
+name_2 = font1.render('player2 name:', True, (0,0,0))
 
-name1 =font1.render(str(right_name.getText()), True,(0,0,0))
-
-name2 =font1.render(left_name,True,(0,0,0))
 x_speed = ball.speed
 y_speed = ball.speed
 
@@ -111,10 +112,15 @@ while game:
         if e.type == QUIT:
             game = False
 
-    window.fill((255, 255, 255))
-    pygame_widgets.update(events)
-    name1 = font1.render(right_name.getText(), True, (0,0,0))
-    name2 = font1.render(left_name, True, (0,0,0))
+    if not  finish:
+        window.fill((255, 255, 255))
+        window.blit(name_2, (515,10))
+        window.blit(name_1, (10,10))
+        pygame_widgets.update(events)
+        name1 = font1.render(right_name.getText(), True, (0,0,0))
+        name2 = font1.render(left_name.getText(), True, (0,0,0))
+        if finish_num == 2:
+            finish = True
 
     if finish:
         background.reset()
