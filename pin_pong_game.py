@@ -8,7 +8,6 @@ win_w = 700
 win_h = 400
 FPS = 60
 finish = False
-finish_num = 0
 game = True
 left_score = 0
 right_score = 0
@@ -20,10 +19,12 @@ sound.set_volume(0.2)
 sound.play()
 kick = mixer.Sound('отскок.ogg')
 
+# Функция TextBox
 def output():
-    global finish_num
-    finish_num += 1
-    print(finish_num)
+    global finish
+    if right_name.getText() != '' and left_name.getText() != '':
+        finish = True
+
 
 
 class GameSprite(sprite.Sprite):
@@ -91,14 +92,16 @@ ball = Ball(40,40,310,100,'Ball.png',4)
 left_player = Player(10,100,130,100,'пинпонг.png',5)
 right_player = Player(10,100,560,100,'пинпонг.png',5)
 
-right_name = TextBox(window, win_w-310, 100, 300, 80, fontSize=50,onSubmit=output)#input('имя правого игрока:')
-left_name = TextBox(window, 10, 100, 300, 80, fontSize=50,onSubmit=output) #input('имя левого игрока:')
+# Объекты TextBox
+right_name = TextBox(window, win_w-310, 120, 300, 80, fontSize=50,onSubmit=output)
+left_name = TextBox(window, 10, 120, 300, 80, fontSize=50,onSubmit=output)
 
 font1 = font.Font(None,35)
 font2 = font.Font(None,70)
-
-name_1 = font1.render('player1 name:', True, (0,0,0))
-name_2 = font1.render('player2 name:', True, (0,0,0))
+# Поясняющие надписи к вводу имени
+name_1 = font1.render('имя левого игрока:', True, (0,0,0))
+name_2 = font1.render('имя правого игрока:', True, (0,0,0))
+name_FAQ = font1.render('Введите имена игроков и нажмите enter', True, (0,0,0))
 
 x_speed = ball.speed
 y_speed = ball.speed
@@ -111,17 +114,15 @@ while game:
     for e in events:
         if e.type == QUIT:
             game = False
-
-    if not  finish:
-        window.fill((255, 255, 255))
-        window.blit(name_2, (515,10))
-        window.blit(name_1, (10,10))
-        pygame_widgets.update(events)
-        name1 = font1.render(right_name.getText(), True, (0,0,0))
-        name2 = font1.render(left_name.getText(), True, (0,0,0))
-        if finish_num == 2:
-            finish = True
-
+    # Заполнение окна цветом и запрос имени
+    window.fill((255, 255, 255))
+    window.blit(name_2, (425,65))
+    window.blit(name_1, (35,65))
+    window.blit(name_FAQ, (90,250))
+    pygame_widgets.update(events)
+    name1 = font1.render(right_name.getText(), True, (0,0,0))
+    name2 = font1.render(left_name.getText(), True, (0,0,0))
+  
     if finish:
         background.reset()
         ball.reset()
