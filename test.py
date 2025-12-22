@@ -14,10 +14,7 @@ def output():
     text12 = False
     text = True
 
-def output2():
-    global text12
-    global text
-    text = False
+
     
 
 

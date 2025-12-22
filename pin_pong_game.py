@@ -1,6 +1,5 @@
 from pygame import *
-import pygame_widgets
-from pygame_widgets.textbox import TextBox
+from My_TextBox import *
 mixer.init()
 font.init()
 
@@ -22,11 +21,12 @@ kick = mixer.Sound('отскок.ogg')
 
 
 # Функция TextBox
-def output():
-    global finish
-    if right_name.getText() != '' and left_name.getText() != '':
-        finish = True
+
     
+def output(text):
+    global finish
+    if right_name.text != '' and left_name.text != '':
+        finish = True
 
 
 
@@ -60,11 +60,11 @@ class Ball(GameSprite):
         if sprite.collide_rect(self, object1,) or sprite.collide_rect(self, object2):
             kick.play()
             #x_speed *= -1 просто смена направления
-            x_speed = (abs(x_speed)+m_speed)/(x_speed/abs(x_speed)) * -1
-            y_speed = (abs(y_speed)+m_speed)/(y_speed/abs(y_speed))
+            x_speed = (abs(x_speed)+1)/(x_speed/abs(x_speed)) * -1
+            y_speed = (abs(y_speed)+1)/(y_speed/abs(y_speed))
 
-            left_player.speed += m_speed
-            right_player.speed += m_speed
+            #left_player.speed += m_speed
+            #right_player.speed += m_speed
 
 
 
@@ -76,19 +76,19 @@ class Ball(GameSprite):
         if self.rect.x <= 0:
             right_score += 1
             self.rect.x = 310
-            x_speed = s_speed
-            y_speed = s_speed
-            left_player.speed = s_speed
-            right_player.speed = s_speed
+            #x_speed = s_speed
+            #y_speed = s_speed
+            #left_player.speed = s_speed
+            #right_player.speed = s_speed
             time.delay(500)
         if self.rect.x >= win_w-self.w:
             left_score += 1
             self.rect.x = 310
-            x_speed = s_speed
-            y_speed = s_speed
-            left_player.speed = s_speed
-            right_player.speed = s_speed
-            time.delay(500)
+            #x_speed = s_speed
+            #y_speed = s_speed
+            #left_player.speed = s_speed
+            #right_player.speed = s_speed
+            #time.delay(500)
         
 
 
@@ -109,8 +109,8 @@ left_player = Player(10,100,130,100,'пинпонг.png',5)
 right_player = Player(10,100,560,100,'пинпонг.png',5)
 
 # Объекты TextBox
-right_name = TextBox(window, win_w-310, 120, 300, 80, fontSize=50,onSubmit=output)
-left_name = TextBox(window, 10, 120, 300, 80, fontSize=50,onSubmit=output)
+right_name = TextInput(100,100,200,50,on_submit=output)
+left_name = TextInput(100,200,200,50,on_submit=output)
 
 
 
@@ -125,28 +125,29 @@ x_speed = ball.speed
 y_speed = ball.speed
 
 
-s_speed = int(input('Start'))
-m_speed = float(input('Mod'))
-
-x_speed = s_speed
-y_speed = s_speed
-
 time.delay(2000)
 clock = time.Clock()
 while game:
-    events = event.get()
-    for e in events:
-        if e.type == QUIT:
+    all_events = event.get()
+    for events in all_events:
+        if events.type == QUIT:
             game = False
+
+        right_name.handle_event(events)
+        left_name.handle_event(events)
+
+
     # Заполнение окна цветом и запрос имени
     if not finish:
-        window.fill((255, 255, 255))
+        window.fill((130, 235, 255))
         window.blit(name_2, (425,65))
         window.blit(name_1, (35,65))
         window.blit(FAQ, (90,250))
-        pygame_widgets.update(events)
-        name1 = font1.render(right_name.getText(), True, (0,0,0))
-        name2 = font1.render(left_name.getText(), True, (0,0,0))
+        right_name.draw(window)
+        left_name.draw(window)
+        name1 = font1.render(right_name.text, True, (0,0,0))
+        name2 = font1.render(left_name.text, True, (0,0,0))
+
 
             
 
