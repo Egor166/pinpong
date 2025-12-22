@@ -19,11 +19,17 @@ sound.set_volume(0.2)
 sound.play()
 kick = mixer.Sound('отскок.ogg')
 
+
+
 # Функция TextBox
 def output():
     global finish
     if right_name.getText() != '' and left_name.getText() != '':
         finish = True
+    
+
+
+
 
 
 
@@ -53,42 +59,52 @@ class Ball(GameSprite):
             kick.play()
         if sprite.collide_rect(self, object1,) or sprite.collide_rect(self, object2):
             kick.play()
-            x_speed *= -1
+            #x_speed *= -1 просто смена направления
+            x_speed = (abs(x_speed)+m_speed)/(x_speed/abs(x_speed)) * -1
+            y_speed = (abs(y_speed)+m_speed)/(y_speed/abs(y_speed))
+
+            left_player.speed += m_speed
+            right_player.speed += m_speed
+
 
 
     def back(self):
         global left_score
         global right_score
+        global x_speed
+        global y_speed
         if self.rect.x <= 0:
             right_score += 1
             self.rect.x = 310
+            x_speed = s_speed
+            y_speed = s_speed
+            left_player.speed = s_speed
+            right_player.speed = s_speed
             time.delay(500)
         if self.rect.x >= win_w-self.w:
             left_score += 1
             self.rect.x = 310
+            x_speed = s_speed
+            y_speed = s_speed
+            left_player.speed = s_speed
+            right_player.speed = s_speed
             time.delay(500)
         
 
 
 class Player(GameSprite):
-    def move_left(self):
-        keys = key.get_pressed()
-        if keys[K_w] and self.rect.y >=0:
+     def move(self,key1,key2):
+        key_pressed = key.get_pressed()
+        if key_pressed[key1] and self.rect.y >0:
             self.rect.y -= self.speed
-        if keys[K_s] and self.rect.y <= win_h-self.h:
+        if key_pressed[key2] and self.rect.y < win_h-self.h:
             self.rect.y += self.speed
 
 
-    def move_right(self):
-        keys = key.get_pressed()
-        if keys[K_UP] and self.rect.y >= 0:
-            self.rect.y -= self.speed
-        if keys[K_DOWN] and self.rect.y <= win_h-self.h:
-            self.rect.y += self.speed
         
 
 background = GameSprite(win_w,win_h,0,0,'background2.png',0)
-ball = Ball(40,40,310,100,'Ball.png',4)
+ball = Ball(40,40,310,100,'Ball.png',2)
 left_player = Player(10,100,130,100,'пинпонг.png',5)
 right_player = Player(10,100,560,100,'пинпонг.png',5)
 
@@ -96,32 +112,44 @@ right_player = Player(10,100,560,100,'пинпонг.png',5)
 right_name = TextBox(window, win_w-310, 120, 300, 80, fontSize=50,onSubmit=output)
 left_name = TextBox(window, 10, 120, 300, 80, fontSize=50,onSubmit=output)
 
+
+
 font1 = font.Font(None,35)
 font2 = font.Font(None,70)
 # Поясняющие надписи к вводу имени
 name_1 = font1.render('имя левого игрока:', True, (0,0,0))
 name_2 = font1.render('имя правого игрока:', True, (0,0,0))
-name_FAQ = font1.render('Введите имена игроков и нажмите enter', True, (0,0,0))
+FAQ = font1.render('Введите имена игроков и нажмите enter', True, (0,0,0))
 
 x_speed = ball.speed
 y_speed = ball.speed
 
+
+s_speed = int(input('Start'))
+m_speed = float(input('Mod'))
+
+x_speed = s_speed
+y_speed = s_speed
+
+time.delay(2000)
 clock = time.Clock()
-
-
 while game:
     events = event.get()
     for e in events:
         if e.type == QUIT:
             game = False
     # Заполнение окна цветом и запрос имени
-    window.fill((255, 255, 255))
-    window.blit(name_2, (425,65))
-    window.blit(name_1, (35,65))
-    window.blit(name_FAQ, (90,250))
-    pygame_widgets.update(events)
-    name1 = font1.render(right_name.getText(), True, (0,0,0))
-    name2 = font1.render(left_name.getText(), True, (0,0,0))
+    if not finish:
+        window.fill((255, 255, 255))
+        window.blit(name_2, (425,65))
+        window.blit(name_1, (35,65))
+        window.blit(FAQ, (90,250))
+        pygame_widgets.update(events)
+        name1 = font1.render(right_name.getText(), True, (0,0,0))
+        name2 = font1.render(left_name.getText(), True, (0,0,0))
+
+            
+
   
     if finish:
         background.reset()
@@ -129,9 +157,9 @@ while game:
         ball.move(left_player,right_player)
         ball.back()
         left_player.reset()
-        left_player.move_left()
+        left_player.move(K_w,K_s)
         right_player.reset()
-        right_player.move_right()
+        right_player.move(K_UP,K_DOWN)
 
         window.blit(name1, (605,10))
         window.blit(name2, (10,10))
