@@ -32,19 +32,46 @@ def output(text):
         game_mode_menu = True
 
 
+def speed_1(text):
+    ball.speed = eval(text)
+    ball.x_speed = eval(text)
+    ball.y_speed = eval(text)
+
+def speed_2(text):
+    right_player.speed = eval(text)
+    left_player.speed = eval(text)
+    return eval(text)
+
 def start_play():
     global game_mode_menu
+    global main_menu
+    global rules_menu
+    global setting_menu
     game_mode_menu = True
     main_menu = False
     rules_menu = False
     setting_menu = False
 
 def set_setting():
+    global game_mode_menu
+    global main_menu
+    global rules_menu
     global setting_menu
     setting_menu = True
     game_mode_menu = False
     main_menu = False
     rules_menu = False
+
+def esc():
+    global game_mode_menu
+    global main_menu
+    global rules_menu
+    global setting_menu
+    main_menu = True
+    setting_menu = False
+    game_mode_menu = False
+    rules_menu = False
+
 
 
 
@@ -70,7 +97,7 @@ class Ball(GameSprite):
         self.x_speed = sprite_speed
         self.y_speed = sprite_speed
 
-    def move(self,object1,object2):
+    def move(self, object1, object2, mod, mod2):
         self.rect.x += self.x_speed
         self.rect.y += self.y_speed
         if self.rect.y <=0 or self.rect.y >= win_h-self.h:
@@ -79,11 +106,11 @@ class Ball(GameSprite):
         if sprite.collide_rect(self, object1,) or sprite.collide_rect(self, object2):
             kick.play()
             #x_speed *= -1 просто смена направления
-            self.x_speed = (abs(self.x_speed)+1)/(self.x_speed/abs(self.x_speed)) * -1
-            self.y_speed = (abs(self.y_speed)+1)/(self.y_speed/abs(self.y_speed))
+            self.x_speed = (abs(self.x_speed)+mod)/(self.x_speed/abs(self.x_speed)) * -1
+            self.y_speed = (abs(self.y_speed)+mod)/(self.y_speed/abs(self.y_speed))
 
-            #left_player.speed += m_speed
-            #right_player.speed += m_speed
+            left_player.speed += mod2
+            right_player.speed += mod2
 
 
 
@@ -95,8 +122,8 @@ class Ball(GameSprite):
             self.rect.x = 310
             self.x_speed = self.speed
             self.y_speed = self.speed
-            #left_player.speed = s_speed
-            #right_player.speed = s_speed
+            left_player.speed = speed_2(players_speed.text)
+            right_player.speed = speed_2(players_speed.text)
             time.delay(500)
         if self.rect.x >= win_w-self.w:
             left_score += 1
@@ -150,14 +177,20 @@ class Button():
 
       
 
-background = GameSprite(win_w,win_h,0,0,'background2.png',0)
-ball = Ball(40,40,310,100,'Ball.png',2)
-left_player = Player(10,100,130,100,'пинпонг.png',5)
-right_player = Player(10,100,560,100,'пинпонг.png',5)
+
 
 # Объекты TextBox
 right_name = TextInput(100, 100 ,200 ,50, on_submit=output)
 left_name = TextInput(100, 200, 200, 50, on_submit=output)
+ball_speed = TextInput(20, 100, 200, 50, on_submit=speed_1)
+ball_boost = TextInput(20, 200, 200, 50, on_submit=None)
+players_speed = TextInput(250, 100, 200, 50, on_submit=None)
+players_boost = TextInput(250, 200, 200, 50, on_submit=None)   #700-200-20
+
+ball_speed.set_text('2')
+ball_boost.set_text('2')
+players_speed.set_text('2')
+players_boost.set_text('2')
 
 
 
@@ -166,6 +199,7 @@ left_name = TextInput(100, 200, 200, 50, on_submit=output)
 rules_button = Button(35, 100, 250, 50, 'Справка', on_submit=None)
 game_mode_button = Button(35, 200, 250, 50, 'Играть', on_submit=start_play)
 setting_button = Button(35, 300, 250, 50, 'Настройки', on_submit=set_setting)
+escape = Button(0, 0, 127, 35, 'Выйти', on_submit=esc)
 
 
 
@@ -176,11 +210,19 @@ font2 = font.Font(None,70)
 #name_2 = font1.render('имя правого игрока:', True, (0,0,0))
 #FAQ = font1.render('Введите имена игроков и нажмите enter', True, (0,0,0))
 programm_name = font2.render('Pingpong', True, (0,0,0))
+ball_speed_txt = font1.render('скорость мяча', True, (0,0,0))
+ball_boost_txt = font1.render('ускорение мяча', True, (0,0,0))
+players_speed_txt = font1.render('скорость игроков', True, (0,0,0))
+players_boost_txt = font1.render('ускорение игроков', True, (0,0,0))
 
-x_speed = ball.speed
-y_speed = ball.speed
 
 
+
+
+background = GameSprite(win_w,win_h,0,0,'background2.png',0)
+ball = Ball(40,40,310,100,'Ball.png', 2)
+left_player = Player(10,100,130,100,'пинпонг.png',5)
+right_player = Player(10,100,560,100,'пинпонг.png',5)
 
 clock = time.Clock()
 while programm:
@@ -191,19 +233,47 @@ while programm:
 
         #right_name.handle_event(events)
         #left_name.handle_event(events)
+        ball_speed.clicked(events)
+        ball_boost.clicked(events)
+        players_speed.clicked(events)
+        players_boost.clicked(events)
+        
+
+
+
+
+    if main_menu:
+        window.fill((130, 235, 255))
+        window.blit(programm_name, (45, 15))
+
         rules_button.clicked(events)
         game_mode_button.clicked(events)
         setting_button.clicked(events)
 
-    if main_menu:
-        window.fill((130, 235, 255))
-        window.blit(programm_name,(45,15))
         rules_button.draw(window)
         game_mode_button.draw(window)
         setting_button.draw(window)
 
     if setting_menu:
         window.fill((130, 235, 255))
+        escape.clicked(events)
+        ball_speed.handle_event(events)
+        ball_boost.handle_event(events)
+        players_speed.handle_event(events)
+        players_boost.handle_event(events)
+        
+
+        window.blit(ball_speed_txt, (30, 70))
+        window.blit(ball_boost_txt, (25, 170))
+        window.blit(players_speed_txt, (240, 70))
+        window.blit(players_boost_txt, (240, 170))
+
+        escape.draw(window)
+        ball_speed.draw(window)
+        ball_boost.draw(window)
+        players_speed.draw(window)
+        players_boost.draw(window)
+
 
 
 
@@ -228,9 +298,11 @@ while programm:
 
     '''
     if game_mode_menu:
+
+  
         background.reset()
         ball.reset()
-        ball.move(left_player,right_player)
+        ball.move(left_player, right_player, eval(ball_boost.text), eval(players_boost.text))
         ball.back()
         left_player.reset()
         left_player.move(K_w,K_s)
@@ -255,5 +327,5 @@ while programm:
             game_mode_menu = False
         '''
         
-    display.update()
     clock.tick(FPS)
+    display.update()

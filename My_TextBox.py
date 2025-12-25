@@ -19,6 +19,24 @@ class TextInput:
         self.active = False
         self.rect = pygame.Rect(x, y,width,height)
 
+
+    def clicked(self, event):
+        if self.active and event.type == pygame.KEYDOWN:  # Только события нажатия клавиш
+            if event.key == pygame.K_RETURN:  # Клавиша Enter
+                if self.text:  # Если есть текст
+                    if self.on_submit != None:
+                        self.on_submit(self.text)
+                self.active = False
+            elif event.key == pygame.K_BACKSPACE:  # Клавиша Backspace
+                self.text = self.text[:-1]  # Удаляем последний символ                    
+            elif event.unicode.isprintable():  # Любой печатный символ
+                self.text += event.unicode  # Добавляем к тексту
+
+
+
+
+
+
     def handle_event(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:
             if self.rect.collidepoint(event.pos):
@@ -28,22 +46,6 @@ class TextInput:
             else:
                 self.active = False
 
-
-
-
-        if self.active and event.type == pygame.KEYDOWN:  # Только события нажатия клавиш
-            if event.key == pygame.K_RETURN:  # Клавиша Enter
-                if self.text:  # Если есть текст
-                    if self.on_submit != None:
-                        self.on_submit(self.text)
-                    else:
-                        # Иначе используем стандартное поведение
-                        print(self.text)
-                        self.text = ""  # Очищаем поле
-            elif event.key == pygame.K_BACKSPACE:  # Клавиша Backspace
-                self.text = self.text[:-1]  # Удаляем последний символ                    
-            elif event.unicode.isprintable():  # Любой печатный символ
-                self.text += event.unicode  # Добавляем к тексту
 
 
     def update(self):
